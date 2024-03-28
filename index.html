@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Application</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            background-color: violet; /* Violet background color */
+        }
+    </style>
+</head>
+<body>
+    <h1>Chat Application</h1>
+    <div id="chat">
+        <div id="messages"></div>
+        <form id="message-form">
+            <input type="text" id="message-input" placeholder="Type your message...">
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+    <script>
+        $(document).ready(function(){
+            function fetchMessages() {
+                $.get('/get_messages', function(data){
+                    $('#messages').empty();
+                    data.forEach(function(message){
+                        $('#messages').append('<p>' + message + '</p>');
+                    });
+                });
+            }
+
+            $('#message-form').submit(function(event){
+                event.preventDefault();
+                var message = $('#message-input').val();
+                $('#message-input').val('');
+                $.post('/send_message', {message: message}, function(data){
+                    fetchMessages();
+                });
+            });
+
+            fetchMessages();
+        });
+    </script>
+</body>
+</html>
